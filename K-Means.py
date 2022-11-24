@@ -19,6 +19,10 @@ def euclidean_dist(vector1, vector2):
     mod = (sum(dist_sum)) ** (1 / 2)
     return mod
 
+def mean(float_list):
+    sum_list = sum(list)
+    list_mean = sum_list/len(list)
+    return mean
 
 print(dict.to_numpy())
 
@@ -33,28 +37,43 @@ class KMeans:
         self.centroids = []
 
         df_array = self.df.to_numpy()
-        features = len(df_array[:, 0])
+        n_features = len(df_array[:, 0]) + 1
 
+        #initializating centroids
         for k in range(self.k):
             centroid = []
-            for index in range(features + 1):
+            for index in range(n_features):
                 fake_feature = random.choice(df_array[:, index])
                 centroid.append(fake_feature)
             self.centroids.append(centroid)
-        print(self.centroids)
-
+        
+        #assigning clusters iterating over all rows and calculating the minimun euclidean distance
         clusters = []
         for row in df_array:
             cluster_distances = []
-            print(row)
             for c in self.centroids:
                 pd = euclidean_dist(row, c)
                 cluster_distances.append(pd)
-            print(cluster_distances)
             min_value = min(cluster_distances)
             index_min_cluster = cluster_distances.index(min_value)
             clusters.append(index_min_cluster)
         clusters_array = np.asarray(clusters, dtype=np.float64)
         clusters_array = clusters_array.reshape(len(df_array), 1)
         df_array = np.hstack((df_array, clusters_array))
-        print(df_array)
+
+        
+        i = 0
+        while i < self.max_iter:
+            #list with "arrays" separeted by clusters
+            clusters_list = []
+            for k in range(self.k):
+                cluster_k = []
+                for row in df_array:
+                    list_row = list(row)
+                    if list_row[n_features] == k:
+                        cluster_k.append(list_row)
+                clusters_list.append(cluster_k)
+            i += 1
+
+KMeans = KMeans(nclusters=3, max_iter=1)
+KMeans.fit(dict)
